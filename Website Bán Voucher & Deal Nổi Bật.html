@@ -1,0 +1,1561 @@
+<!DOCTYPE html>
+<html lang="vi" class="scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>VoucherZone - Kho Deals & E-Voucher Giá Tốt Nhất</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Font Awesome Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <!-- Google Fonts Inter -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
+    <!-- QR Code Generator Library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        brand: {
+                            50: '#fff1f2',
+                            100: '#ffe4e6',
+                            500: '#f43f5e',
+                            600: '#e11d48',
+                            700: '#be123c',
+                        },
+                        accent: {
+                            500: '#f97316',
+                            600: '#ea580c',
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+            height: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #f1f1f1;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #cbd5e1;
+            border-radius: 4px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #94a3b8;
+        }
+        /* Pulse Animation for Flash Sale */
+        @keyframes pulse-ring {
+            0% { transform: scale(0.95); opacity: 0.8; }
+            50% { transform: scale(1.05); opacity: 1; }
+            100% { transform: scale(0.95); opacity: 0.8; }
+        }
+        .pulse-sale {
+            animation: pulse-ring 2s infinite ease-in-out;
+        }
+    </style>
+</head>
+<body class="bg-gray-50 text-gray-800 font-sans antialiased flex flex-col min-h-screen">
+
+    <!-- TOP ANNOUNCEMENT BAR -->
+    <div class="bg-gradient-to-r from-brand-600 to-accent-600 text-white text-xs md:text-sm font-medium py-2 px-4 text-center flex justify-between items-center">
+        <div class="container mx-auto flex justify-between items-center">
+            <span class="hidden md:inline"><i class="fa-solid fa-fire mr-1"></i> Săn Deal Hot Hôm Nay: Nhập code <strong>DEAL50K</strong> giảm ngay 50.000đ cho đơn từ 200k!</span>
+            <span class="md:hidden"><i class="fa-solid fa-fire mr-1"></i> Mã <strong>DEAL50K</strong> giảm ngay 50K!</span>
+            <div class="flex items-center gap-4 text-xs">
+                <a href="#" class="hover:underline flex items-center gap-1"><i class="fa-solid fa-headset"></i> Hotline: 1900 6868</a>
+                <span class="opacity-50">|</span>
+                <a href="#" class="hover:underline"><i class="fa-solid fa-mobile-screen"></i> Tải App</a>
+            </div>
+        </div>
+    </div>
+
+    <!-- MAIN HEADER -->
+    <header class="sticky top-0 z-40 bg-white shadow-sm border-b border-gray-100">
+        <div class="container mx-auto px-4 py-3 flex items-center justify-between gap-4">
+            
+            <!-- Logo -->
+            <a href="#" onclick="switchTab('home')" class="flex items-center gap-2 group">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-accent-500 flex items-center justify-center text-white font-black text-xl shadow-md group-hover:scale-105 transition-transform">
+                    V
+                </div>
+                <div>
+                    <span class="text-xl font-black bg-gradient-to-r from-brand-600 to-accent-500 bg-clip-text text-transparent tracking-tight">VoucherZone</span>
+                    <span class="text-[10px] block font-semibold text-gray-400 uppercase -mt-1 tracking-widest">Săn Deal Giá Đỉnh</span>
+                </div>
+            </a>
+
+            <!-- Search Bar -->
+            <div class="flex-1 max-w-2xl hidden md:block">
+                <div class="relative">
+                    <input type="text" id="searchInput" onkeyup="handleSearch()" placeholder="Tìm kiếm buffet, spa, vé xem phim, voucher du lịch..." 
+                        class="w-full pl-10 pr-24 py-2.5 rounded-full border border-gray-200 focus:outline-none focus:border-brand-500 focus:ring-2 focus:ring-brand-100 text-sm transition">
+                    <i class="fa-solid fa-magnifying-glass absolute left-3.5 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    <button onclick="handleSearch()" class="absolute right-1 top-1/2 -translate-y-1/2 bg-brand-600 hover:bg-brand-700 text-white text-xs font-semibold px-4 py-1.5 rounded-full transition">
+                        Tìm kiếm
+                    </button>
+                </div>
+            </div>
+
+            <!-- Actions Header -->
+            <div class="flex items-center gap-3 md:gap-5">
+                <!-- My Vouchers Link -->
+                <button onclick="switchTab('my-vouchers')" class="flex items-center gap-1.5 text-sm font-medium text-gray-700 hover:text-brand-600 transition">
+                    <i class="fa-solid fa-ticket text-brand-500 text-lg"></i>
+                    <span class="hidden lg:inline">Voucher của tôi</span>
+                </button>
+
+                <!-- Cart Button -->
+                <button onclick="toggleCartDrawer(true)" class="relative p-2 text-gray-700 hover:text-brand-600 transition rounded-full hover:bg-gray-100">
+                    <i class="fa-solid fa-bag-shopping text-xl"></i>
+                    <span id="cartBadge" class="absolute -top-1 -right-1 bg-brand-600 text-white text-[10px] font-bold w-5 h-5 rounded-full flex items-center justify-center border-2 border-white">0</span>
+                </button>
+
+                <!-- Account / Login -->
+                <button onclick="toggleAccountModal()" class="flex items-center gap-2 pl-2 border-l border-gray-200">
+                    <div class="w-8 h-8 rounded-full bg-brand-100 text-brand-600 flex items-center justify-center font-bold text-sm">
+                        <i class="fa-regular fa-user"></i>
+                    </div>
+                    <div class="hidden sm:block text-left">
+                        <span class="text-xs text-gray-400 block -mb-0.5">Xin chào,</span>
+                        <span class="text-xs font-semibold text-gray-700 block" id="userDisplayName">Thành viên</span>
+                    </div>
+                </button>
+            </div>
+        </div>
+
+        <!-- Mobile Search Bar -->
+        <div class="p-3 border-t border-gray-100 md:hidden bg-white">
+            <div class="relative">
+                <input type="text" id="mobileSearchInput" onkeyup="handleSearch()" placeholder="Tìm kiếm voucher, thương hiệu..." 
+                    class="w-full pl-9 pr-4 py-2 rounded-full border border-gray-200 focus:outline-none focus:border-brand-500 text-sm">
+                <i class="fa-solid fa-magnifying-glass absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 text-xs"></i>
+            </div>
+        </div>
+
+        <!-- CATEGORIES NAV BAR -->
+        <nav class="bg-gray-900 text-white text-xs md:text-sm font-medium overflow-x-auto whitespace-nowrap scrollbar-none">
+            <div class="container mx-auto px-4 flex items-center gap-1 md:gap-6 py-2.5">
+                <button onclick="filterCategory('all')" class="cat-nav-btn active px-3 py-1 rounded-full bg-brand-600 text-white hover:bg-brand-600 transition flex items-center gap-1.5">
+                    <i class="fa-solid fa-border-all"></i> Tất cả
+                </button>
+                <button onclick="filterCategory('food')" class="cat-nav-btn px-3 py-1 rounded-full hover:bg-gray-800 transition flex items-center gap-1.5 text-gray-300 hover:text-white">
+                    <i class="fa-solid fa-utensils text-amber-400"></i> Ẩm Thực
+                </button>
+                <button onclick="filterCategory('travel')" class="cat-nav-btn px-3 py-1 rounded-full hover:bg-gray-800 transition flex items-center gap-1.5 text-gray-300 hover:text-white">
+                    <i class="fa-solid fa-plane-departure text-sky-400"></i> Du Lịch & Khách Sạn
+                </button>
+                <button onclick="filterCategory('beauty')" class="cat-nav-btn px-3 py-1 rounded-full hover:bg-gray-800 transition flex items-center gap-1.5 text-gray-300 hover:text-white">
+                    <i class="fa-solid fa-spa text-pink-400"></i> Làm Đẹp & Spa
+                </button>
+                <button onclick="filterCategory('entertainment')" class="cat-nav-btn px-3 py-1 rounded-full hover:bg-gray-800 transition flex items-center gap-1.5 text-gray-300 hover:text-white">
+                    <i class="fa-solid fa-film text-purple-400"></i> Giải Trí & Vé
+                </button>
+                <button onclick="filterCategory('shopping')" class="cat-nav-btn px-3 py-1 rounded-full hover:bg-gray-800 transition flex items-center gap-1.5 text-gray-300 hover:text-white">
+                    <i class="fa-solid fa-bag-shopping text-emerald-400"></i> Mua Sắm
+                </button>
+            </div>
+        </nav>
+    </header>
+
+    <!-- MAIN CONTENT VIEW: HOME / STORE -->
+    <div id="homeView" class="flex-1">
+        
+        <!-- HERO SLIDER / BANNER SECTION -->
+        <section class="container mx-auto px-4 my-4 md:my-6">
+            <div class="grid grid-cols-1 lg:grid-cols-3 gap-4">
+                <!-- Main Slider Container -->
+                <div class="lg:col-span-2 relative rounded-2xl overflow-hidden shadow-lg bg-gray-900 group min-h-[220px] sm:min-h-[300px] md:min-h-[360px] flex items-center">
+                    <img id="bannerImage" src="https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80" alt="Flash Sale Deals" class="absolute inset-0 w-full h-full object-cover opacity-60 transition-all duration-700">
+                    <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent"></div>
+                    
+                    <div class="relative z-10 p-6 sm:p-10 text-white max-w-xl">
+                        <span id="bannerTag" class="bg-brand-600 text-white text-xs font-bold uppercase tracking-wider px-3 py-1 rounded-full inline-block mb-3">
+                            <i class="fa-solid fa-bolt mr-1"></i> Siêu Deal Cuối Tuần
+                        </span>
+                        <h1 id="bannerTitle" class="text-2xl sm:text-4xl font-extrabold leading-tight mb-3">
+                            Buffet Hải Sản Cao Cấp 5 Sao - Giảm Đến 45%
+                        </h1>
+                        <p id="bannerDesc" class="text-sm sm:text-base text-gray-200 mb-6 line-clamp-2">
+                            Thưởng thức Tôm hùm, Cua Cà Mau & hơn 100 món Á-Âu tại chuỗi nhà hàng Sheraton. Áp dụng cho cả tuần!
+                        </p>
+                        <div class="flex items-center gap-3">
+                            <button onclick="scrollToDeals()" class="bg-gradient-to-r from-brand-600 to-accent-500 hover:from-brand-700 hover:to-accent-600 text-white font-bold px-6 py-2.5 rounded-full shadow-lg transition transform hover:-translate-y-0.5">
+                                Săn Deal Ngay
+                            </button>
+                            <span class="text-xs text-gray-300"><i class="fa-solid fa-shield-check text-emerald-400"></i> Cam kết hoàn tiền</span>
+                        </div>
+                    </div>
+
+                    <!-- Slider Controls -->
+                    <button onclick="prevBanner()" class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white text-gray-800 p-2 rounded-full backdrop-blur-sm transition opacity-0 group-hover:opacity-100">
+                        <i class="fa-solid fa-chevron-left w-5 h-5 flex items-center justify-center"></i>
+                    </button>
+                    <button onclick="nextBanner()" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/30 hover:bg-white text-gray-800 p-2 rounded-full backdrop-blur-sm transition opacity-0 group-hover:opacity-100">
+                        <i class="fa-solid fa-chevron-right w-5 h-5 flex items-center justify-center"></i>
+                    </button>
+
+                    <!-- Indicators -->
+                    <div class="absolute bottom-3 right-6 flex gap-1.5 z-10" id="bannerDots">
+                        <!-- Dynamic dots -->
+                    </div>
+                </div>
+
+                <!-- Right Sub-Banners -->
+                <div class="grid grid-cols-2 lg:grid-cols-1 gap-4">
+                    <div class="relative rounded-2xl overflow-hidden shadow bg-gray-900 group h-[100px] sm:h-[140px] md:h-[170px]">
+                        <img src="https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover opacity-70 group-hover:scale-105 transition duration-500" alt="Spa">
+                        <div class="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent p-4 flex flex-col justify-center text-white">
+                            <span class="text-[10px] text-pink-300 font-bold uppercase">Spa & Relax</span>
+                            <h3 class="font-bold text-sm sm:text-base leading-snug">Massage Body & Skincare -50%</h3>
+                            <span class="text-xs text-amber-300 font-semibold mt-1">Chỉ từ 199.000đ</span>
+                        </div>
+                    </div>
+                    <div class="relative rounded-2xl overflow-hidden shadow bg-gray-900 group h-[100px] sm:h-[140px] md:h-[170px]">
+                        <img src="https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80" class="w-full h-full object-cover opacity-70 group-hover:scale-105 transition duration-500" alt="Travel">
+                        <div class="absolute inset-0 bg-gradient-to-r from-black/80 to-transparent p-4 flex flex-col justify-center text-white">
+                            <span class="text-[10px] text-sky-300 font-bold uppercase">Nghỉ Dưỡng</span>
+                            <h3 class="font-bold text-sm sm:text-base leading-snug">Resort Phú Quốc 4★ Giá Sốc</h3>
+                            <span class="text-xs text-amber-300 font-semibold mt-1">Chỉ từ 1.250.000đ</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- FLASH SALE SECTION WITH COUNTDOWN -->
+        <section class="container mx-auto px-4 my-8">
+            <div class="bg-gradient-to-r from-red-600 via-brand-600 to-accent-600 rounded-2xl p-4 md:p-6 text-white shadow-xl">
+                <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 pb-4 border-b border-white/20">
+                    <div class="flex items-center gap-3">
+                        <div class="bg-white text-brand-600 text-2xl p-2.5 rounded-xl shadow-md pulse-sale">
+                            <i class="fa-solid fa-bolt"></i>
+                        </div>
+                        <div>
+                            <div class="flex items-center gap-2">
+                                <h2 class="text-xl md:text-2xl font-black uppercase tracking-wider">FLASH SALE HÔM NAY</h2>
+                                <span class="bg-amber-400 text-gray-900 font-extrabold text-[10px] px-2 py-0.5 rounded uppercase">SỐ LƯỢNG CÓ HẠN</span>
+                            </div>
+                            <p class="text-xs md:text-sm text-red-100">Các deal giảm sâu nhất được làm mới mỗi 12 giờ</p>
+                        </div>
+                    </div>
+                    
+                    <!-- Global Timer -->
+                    <div class="flex items-center gap-2">
+                        <span class="text-xs font-semibold uppercase tracking-wider text-red-100 hidden md:inline">Kết thúc sau:</span>
+                        <div class="flex gap-1.5 font-bold text-gray-900 text-sm md:text-base">
+                            <span id="flashHours" class="bg-white rounded-lg px-2.5 py-1 shadow">04</span> :
+                            <span id="flashMinutes" class="bg-white rounded-lg px-2.5 py-1 shadow">28</span> :
+                            <span id="flashSeconds" class="bg-white rounded-lg px-2.5 py-1 shadow text-brand-600">45</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Flash Sale Cards Container -->
+                <div id="flashSaleGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <!-- Dynamic Flash Sale Items Rendered Here -->
+                </div>
+            </div>
+        </section>
+
+        <!-- MAIN STORE SECTION: FILTER & VOUCHERS GRID -->
+        <section id="dealsSection" class="container mx-auto px-4 my-8">
+            
+            <!-- Section Header & Filter Bar -->
+            <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 mb-6 pb-4 border-b border-gray-200">
+                <div>
+                    <h2 class="text-xl md:text-2xl font-extrabold text-gray-900 flex items-center gap-2">
+                        <i class="fa-solid fa-fire text-brand-600"></i> Danh Sách E-Voucher Hot
+                    </h2>
+                    <p class="text-xs md:text-sm text-gray-500">Khám phá vô vàn ưu đãi cực hời dành cho bạn</p>
+                </div>
+
+                <!-- Filter Controls -->
+                <div class="flex flex-wrap items-center gap-3">
+                    <!-- Location Filter -->
+                    <select id="locationFilter" onchange="applyFilters()" class="bg-white border border-gray-200 text-xs md:text-sm font-medium rounded-xl px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-sm">
+                        <option value="all">📍 Tất cả khu vực</option>
+                        <option value="hcm">TP. Hồ Chí Minh</option>
+                        <option value="hanoi">Hà Nội</option>
+                        <option value="danang">Đà Nẵng</option>
+                    </select>
+
+                    <!-- Price Filter -->
+                    <select id="priceFilter" onchange="applyFilters()" class="bg-white border border-gray-200 text-xs md:text-sm font-medium rounded-xl px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-sm">
+                        <option value="all">💰 Khoảng giá</option>
+                        <option value="under200">Dưới 200.000đ</option>
+                        <option value="200to500">200.000đ - 500.000đ</option>
+                        <option value="above500">Trên 500.000đ</option>
+                    </select>
+
+                    <!-- Sort By -->
+                    <select id="sortBy" onchange="applyFilters()" class="bg-white border border-gray-200 text-xs md:text-sm font-medium rounded-xl px-3 py-2 text-gray-700 focus:outline-none focus:ring-2 focus:ring-brand-500 shadow-sm">
+                        <option value="popular">🔥 Bán chạy nhất</option>
+                        <option value="discount">📉 Giảm giá nhiều nhất</option>
+                        <option value="priceAsc">💲 Giá tăng dần</option>
+                        <option value="priceDesc">💲 Giá giảm dần</option>
+                    </select>
+                </div>
+            </div>
+
+            <!-- Active Filters Indicators -->
+            <div id="activeFilterTags" class="flex flex-wrap gap-2 mb-4 hidden">
+                <!-- Dynamic Tag indicators -->
+            </div>
+
+            <!-- VOUCHER GRID -->
+            <div id="voucherGrid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
+                <!-- Rendered dynamically by JS -->
+            </div>
+
+            <!-- Empty State -->
+            <div id="emptyState" class="hidden text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-100">
+                <div class="w-20 h-20 bg-gray-100 rounded-full flex items-center justify-center mx-auto text-gray-400 text-3xl mb-4">
+                    <i class="fa-solid fa-ghost"></i>
+                </div>
+                <h3 class="text-lg font-bold text-gray-800 mb-1">Không tìm thấy voucher phù hợp</h3>
+                <p class="text-xs text-gray-500 mb-4">Thử thay đổi bộ lọc hoặc từ khóa tìm kiếm của bạn</p>
+                <button onclick="resetFilters()" class="bg-brand-600 text-white text-xs font-semibold px-5 py-2 rounded-full hover:bg-brand-700 transition">
+                    Xóa tất cả bộ lọc
+                </button>
+            </div>
+        </section>
+
+        <!-- WHY CHOOSE US -->
+        <section class="bg-white border-t border-gray-100 py-12 my-8">
+            <div class="container mx-auto px-4">
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 text-center">
+                    <div class="p-4">
+                        <div class="w-12 h-12 bg-red-100 text-brand-600 rounded-2xl flex items-center justify-center mx-auto mb-3 text-xl">
+                            <i class="fa-solid fa-bolt-lightning"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-gray-800 mb-1">Nhận Mã Instant E-Voucher</h4>
+                        <p class="text-xs text-gray-500">Mã gửi ngay qua SMS và Email chỉ trong 30 giây sau khi thanh toán.</p>
+                    </div>
+                    <div class="p-4">
+                        <div class="w-12 h-12 bg-amber-100 text-amber-600 rounded-2xl flex items-center justify-center mx-auto mb-3 text-xl">
+                            <i class="fa-solid fa-tag"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-gray-800 mb-1">Giá Rẻ Nhất Thị Trường</h4>
+                        <p class="text-xs text-gray-500">Cam kết hoàn tiền chênh lệch nếu tìm thấy nơi nào rẻ hơn.</p>
+                    </div>
+                    <div class="p-4">
+                        <div class="w-12 h-12 bg-emerald-100 text-emerald-600 rounded-2xl flex items-center justify-center mx-auto mb-3 text-xl">
+                            <i class="fa-solid fa-shield-heart"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-gray-800 mb-1">Thương Hiệu Uy Tín</h4>
+                        <p class="text-xs text-gray-500">Đối tác chiến lược của hơn 500+ chuỗi nhà hàng, spa & thương hiệu lớn.</p>
+                    </div>
+                    <div class="p-4">
+                        <div class="w-12 h-12 bg-sky-100 text-sky-600 rounded-2xl flex items-center justify-center mx-auto mb-3 text-xl">
+                            <i class="fa-solid fa-headset"></i>
+                        </div>
+                        <h4 class="font-bold text-sm text-gray-800 mb-1">Hỗ Trợ 24/7</h4>
+                        <p class="text-xs text-gray-500">Đội ngũ CSKH hỗ trợ tư vấn và giải quyết thắc mắc mọi lúc.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+    </div>
+
+    <!-- TAB: MY VOUCHERS PAGE -->
+    <div id="myVouchersView" class="container mx-auto px-4 my-8 flex-1 hidden">
+        <div class="max-w-4xl mx-auto">
+            <div class="flex items-center justify-between mb-6">
+                <div>
+                    <h1 class="text-2xl font-black text-gray-900 flex items-center gap-2">
+                        <i class="fa-solid fa-ticket text-brand-600"></i> Quản Lý Voucher Của Tôi
+                    </h1>
+                    <p class="text-xs text-gray-500 mt-1">Danh sách E-Voucher bạn đã đặt mua tại VoucherZone</p>
+                </div>
+                <button onclick="switchTab('home')" class="text-xs font-semibold text-brand-600 hover:underline">
+                    ← Tiếp tục săn deal
+                </button>
+            </div>
+
+            <!-- Status Tabs -->
+            <div class="flex border-b border-gray-200 mb-6 gap-6 text-sm font-medium">
+                <button onclick="filterMyVouchers('all')" id="tab-mv-all" class="my-voucher-tab active border-b-2 border-brand-600 text-brand-600 pb-2">
+                    Tất cả (<span id="count-mv-all">0</span>)
+                </button>
+                <button onclick="filterMyVouchers('unused')" id="tab-mv-unused" class="my-voucher-tab text-gray-500 hover:text-gray-800 pb-2">
+                    Chưa sử dụng (<span id="count-mv-unused">0</span>)
+                </button>
+                <button onclick="filterMyVouchers('used')" id="tab-mv-used" class="my-voucher-tab text-gray-500 hover:text-gray-800 pb-2">
+                    Đã sử dụng (<span id="count-mv-used">0</span>)
+                </button>
+            </div>
+
+            <!-- Purchased Vouchers List -->
+            <div id="purchasedVouchersList" class="space-y-4">
+                <!-- Dynamically populated -->
+            </div>
+
+            <!-- Empty Purchased Vouchers State -->
+            <div id="emptyMyVouchers" class="hidden text-center py-16 bg-white rounded-2xl shadow-sm border border-gray-100">
+                <div class="w-16 h-16 bg-brand-50 rounded-full flex items-center justify-center mx-auto text-brand-500 text-2xl mb-3">
+                    <i class="fa-regular fa-folder-open"></i>
+                </div>
+                <h3 class="font-bold text-gray-800">Chưa có voucher nào</h3>
+                <p class="text-xs text-gray-500 mb-4 mt-1">Bạn chưa hoàn tất đơn hàng nào hoặc không có voucher phù hợp với bộ lọc.</p>
+                <button onclick="switchTab('home')" class="bg-brand-600 text-white text-xs font-semibold px-5 py-2 rounded-full hover:bg-brand-700 transition">
+                    Săn Deal Ngay
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: VOUCHER DETAIL MODAL -->
+    <div id="voucherModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-3xl w-full overflow-hidden shadow-2xl relative my-8 animate-in fade-in zoom-in-95 duration-200">
+            <!-- Close Button -->
+            <button onclick="closeVoucherModal()" class="absolute right-4 top-4 z-10 w-9 h-9 rounded-full bg-black/40 hover:bg-black/70 text-white flex items-center justify-center transition">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <div class="grid grid-cols-1 md:grid-cols-2">
+                <!-- Left: Gallery & Cover -->
+                <div class="relative bg-gray-900 h-64 md:h-full min-h-[250px]">
+                    <img id="modalImg" src="" alt="Voucher detail" class="w-full h-full object-cover">
+                    <div class="absolute top-4 left-4 bg-red-600 text-white font-black text-xs px-2.5 py-1 rounded-md uppercase tracking-wider shadow">
+                        <span id="modalDiscount"></span> OFF
+                    </div>
+                </div>
+
+                <!-- Right: Content & Actions -->
+                <div class="p-6 flex flex-col justify-between max-h-[80vh] overflow-y-auto">
+                    <div>
+                        <div class="flex items-center gap-2 mb-1">
+                            <span id="modalBrand" class="text-xs font-bold text-brand-600 uppercase tracking-wider"></span>
+                            <span class="text-gray-300">•</span>
+                            <span id="modalLocation" class="text-xs text-gray-500"></span>
+                        </div>
+                        <h2 id="modalTitle" class="text-lg md:text-xl font-extrabold text-gray-900 mb-3 leading-snug"></h2>
+
+                        <!-- Rating & Sales -->
+                        <div class="flex items-center gap-3 text-xs mb-4">
+                            <div class="flex items-center text-amber-400 gap-1">
+                                <i class="fa-solid fa-star"></i>
+                                <span id="modalRating" class="font-bold text-gray-800"></span>
+                            </div>
+                            <span class="text-gray-300">|</span>
+                            <span class="text-gray-500">Đã bán <strong id="modalSold" class="text-gray-800"></strong></span>
+                        </div>
+
+                        <!-- Price Section -->
+                        <div class="bg-gray-50 p-3.5 rounded-2xl mb-4 flex items-center justify-between">
+                            <div>
+                                <div class="flex items-baseline gap-2">
+                                    <span id="modalPrice" class="text-2xl font-black text-brand-600"></span>
+                                    <span id="modalOriginalPrice" class="text-xs text-gray-400 line-through"></span>
+                                </div>
+                                <span class="text-[11px] text-emerald-600 font-semibold"><i class="fa-solid fa-circle-check"></i> Đã bao gồm thuế & phí</span>
+                            </div>
+                            <div class="text-right">
+                                <span class="text-[10px] text-gray-400 block">Thời hạn còn</span>
+                                <span id="modalTimer" class="text-xs font-bold text-amber-600"><i class="fa-regular fa-clock"></i> 3 ngày</span>
+                            </div>
+                        </div>
+
+                        <!-- Highlights / Terms -->
+                        <div class="space-y-3 mb-6 text-xs text-gray-600">
+                            <div>
+                                <h4 class="font-bold text-gray-800 uppercase tracking-wider text-[11px] mb-1"><i class="fa-solid fa-circle-info text-brand-500 mr-1"></i> Điều kiện áp dụng:</h4>
+                                <ul class="list-disc pl-4 space-y-1 text-gray-600" id="modalTerms">
+                                    <li>Hạn sử dụng: 30 ngày kể từ ngày mua.</li>
+                                    <li>Áp dụng dùng tại chỗ hoặc mang về.</li>
+                                    <li>Mỗi hóa đơn được áp dụng tối đa 2 voucher.</li>
+                                    <li>Vui lòng đặt chỗ trước 2 tiếng qua Hotline nhà hàng.</li>
+                                </ul>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Quantity & Buttons -->
+                    <div class="pt-4 border-t border-gray-100">
+                        <div class="flex items-center justify-between mb-4">
+                            <span class="text-xs font-bold text-gray-700">Số lượng:</span>
+                            <div class="flex items-center border border-gray-200 rounded-lg">
+                                <button onclick="adjustModalQty(-1)" class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-l-lg">-</button>
+                                <span id="modalQty" class="w-10 text-center text-xs font-bold">1</span>
+                                <button onclick="adjustModalQty(1)" class="w-8 h-8 flex items-center justify-center text-gray-600 hover:bg-gray-100 rounded-r-lg">+</button>
+                            </div>
+                        </div>
+
+                        <div class="grid grid-cols-2 gap-3">
+                            <button onclick="addToCartFromModal()" class="w-full py-2.5 px-4 rounded-xl border border-brand-600 text-brand-600 font-bold text-xs hover:bg-brand-50 transition flex items-center justify-center gap-1.5">
+                                <i class="fa-solid fa-cart-plus"></i> Thêm Vào Giỏ
+                            </button>
+                            <button onclick="buyNowFromModal()" class="w-full py-2.5 px-4 rounded-xl bg-gradient-to-r from-brand-600 to-accent-500 text-white font-bold text-xs hover:shadow-lg transition">
+                                Mua Ngay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- DRAWER: SHOPPING CART -->
+    <div id="cartDrawer" class="fixed inset-0 z-50 overflow-hidden hidden">
+        <div class="absolute inset-0 bg-black/50 backdrop-blur-sm transition-opacity" onclick="toggleCartDrawer(false)"></div>
+
+        <div class="fixed inset-y-0 right-0 max-w-full flex pl-10">
+            <div class="w-screen max-w-md bg-white shadow-xl flex flex-col">
+                <!-- Drawer Header -->
+                <div class="p-4 border-b border-gray-100 flex items-center justify-between bg-gray-50">
+                    <div class="flex items-center gap-2">
+                        <i class="fa-solid fa-bag-shopping text-brand-600 text-lg"></i>
+                        <h2 class="font-bold text-gray-800">Giỏ Hàng Của Bạn</h2>
+                        <span id="cartCountTitle" class="text-xs text-gray-500">(0)</span>
+                    </div>
+                    <button onclick="toggleCartDrawer(false)" class="p-2 text-gray-400 hover:text-gray-700 rounded-full">
+                        <i class="fa-solid fa-xmark text-lg"></i>
+                    </button>
+                </div>
+
+                <!-- Cart Items Container -->
+                <div class="flex-1 overflow-y-auto p-4 space-y-4" id="cartItemsContainer">
+                    <!-- Dynamic Cart Items -->
+                </div>
+
+                <!-- Empty Cart State -->
+                <div id="emptyCart" class="hidden flex-1 flex flex-col items-center justify-center p-6 text-center">
+                    <div class="w-16 h-16 bg-gray-100 rounded-full flex items-center justify-center text-gray-400 text-2xl mb-3">
+                        <i class="fa-solid fa-basket-shopping"></i>
+                    </div>
+                    <p class="font-bold text-gray-700">Giỏ hàng đang trống</p>
+                    <p class="text-xs text-gray-400 mt-1 mb-4">Hãy chọn những deal hấp dẫn nhất để lấp đầy giỏ nhé!</p>
+                    <button onclick="toggleCartDrawer(false)" class="bg-brand-600 text-white text-xs font-semibold px-5 py-2 rounded-full">Khám phá Voucher</button>
+                </div>
+
+                <!-- Drawer Footer & Checkout summary -->
+                <div id="cartFooter" class="p-4 border-t border-gray-100 bg-gray-50 space-y-3">
+                    <!-- Promo Code input -->
+                    <div class="flex gap-2">
+                        <input type="text" id="promoInput" placeholder="Mã giảm giá (ví dụ: DEAL50K)" class="flex-1 uppercase text-xs px-3 py-2 border border-gray-200 rounded-xl focus:outline-none focus:border-brand-500">
+                        <button onclick="applyPromoCode()" class="bg-gray-800 text-white text-xs font-bold px-4 py-2 rounded-xl hover:bg-gray-900 transition">
+                            Áp dụng
+                        </button>
+                    </div>
+                    <div id="promoMessage" class="text-[11px] hidden"></div>
+
+                    <!-- Pricing Summary -->
+                    <div class="space-y-1.5 text-xs text-gray-600 pt-2 border-t border-gray-200">
+                        <div class="flex justify-between">
+                            <span>Tạm tính:</span>
+                            <span id="cartSubtotal" class="font-semibold text-gray-800">0đ</span>
+                        </div>
+                        <div class="flex justify-between text-emerald-600">
+                            <span>Giảm giá Promo:</span>
+                            <span id="cartDiscount">-0đ</span>
+                        </div>
+                        <div class="flex justify-between text-sm font-black text-gray-900 pt-2 border-t border-gray-200">
+                            <span>Tổng thanh toán:</span>
+                            <span id="cartTotal" class="text-brand-600">0đ</span>
+                        </div>
+                    </div>
+
+                    <button onclick="openCheckoutModal()" class="w-full py-3 bg-gradient-to-r from-brand-600 to-accent-500 text-white font-bold text-sm rounded-xl shadow-lg hover:opacity-95 transition flex items-center justify-center gap-2">
+                        <span>Tiến Hành Thanh Toán</span>
+                        <i class="fa-solid fa-arrow-right"></i>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: CHECKOUT & PAYMENT -->
+    <div id="checkoutModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-xl w-full overflow-hidden shadow-2xl relative my-8 p-6">
+            <button onclick="closeCheckoutModal()" class="absolute right-4 top-4 text-gray-400 hover:text-gray-700">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <h2 class="text-xl font-extrabold text-gray-900 mb-1 flex items-center gap-2">
+                <i class="fa-solid fa-credit-card text-brand-600"></i> Thanh Toán Đơn Hàng
+            </h2>
+            <p class="text-xs text-gray-500 mb-6">Mã E-Voucher sẽ được gửi trực tiếp tới thông tin liên hệ dưới đây</p>
+
+            <form id="checkoutForm" onsubmit="handlePaymentSubmit(event)" class="space-y-4">
+                <!-- Customer info -->
+                <div>
+                    <label class="block text-xs font-bold text-gray-700 mb-1">Họ và Tên <span class="text-red-500">*</span></label>
+                    <input type="text" id="custName" required placeholder="Nguyễn Văn A" class="w-full text-xs px-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                </div>
+
+                <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Số điện thoại (Nhận SMS) <span class="text-red-500">*</span></label>
+                        <input type="tel" id="custPhone" required placeholder="0901234567" class="w-full text-xs px-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-700 mb-1">Email (Nhận Voucher) <span class="text-red-500">*</span></label>
+                        <input type="email" id="custEmail" required placeholder="nguyenvana@gmail.com" class="w-full text-xs px-3 py-2.5 border border-gray-200 rounded-xl focus:ring-2 focus:ring-brand-500 outline-none">
+                    </div>
+                </div>
+
+                <!-- Payment Method selection -->
+                <div class="pt-2">
+                    <label class="block text-xs font-bold text-gray-700 mb-2">Phương thức thanh toán <span class="text-red-500">*</span></label>
+                    <div class="grid grid-cols-2 gap-2 text-xs">
+                        <label class="border-2 border-brand-600 rounded-xl p-3 flex items-center gap-2 cursor-pointer bg-brand-50/30">
+                            <input type="radio" name="paymentMethod" value="momo" checked class="accent-brand-600">
+                            <span class="font-bold text-pink-700"><i class="fa-solid fa-wallet"></i> Ví MoMo</span>
+                        </label>
+                        <label class="border border-gray-200 rounded-xl p-3 flex items-center gap-2 cursor-pointer hover:border-brand-500">
+                            <input type="radio" name="paymentMethod" value="zalopay" class="accent-brand-600">
+                            <span class="font-bold text-sky-600"><i class="fa-solid fa-mobile"></i> ZaloPay</span>
+                        </label>
+                        <label class="border border-gray-200 rounded-xl p-3 flex items-center gap-2 cursor-pointer hover:border-brand-500">
+                            <input type="radio" name="paymentMethod" value="vnpay" class="accent-brand-600">
+                            <span class="font-bold text-blue-700"><i class="fa-solid fa-qrcode"></i> VNPay QR</span>
+                        </label>
+                        <label class="border border-gray-200 rounded-xl p-3 flex items-center gap-2 cursor-pointer hover:border-brand-500">
+                            <input type="radio" name="paymentMethod" value="card" class="accent-brand-600">
+                            <span class="font-bold text-gray-700"><i class="fa-solid fa-credit-card"></i> Thẻ Visa/ATM</span>
+                        </label>
+                    </div>
+                </div>
+
+                <!-- Amount Summary -->
+                <div class="bg-gray-50 p-3.5 rounded-xl flex items-center justify-between text-xs mt-4">
+                    <span class="font-semibold text-gray-600">Thành tiền thanh toán:</span>
+                    <span id="checkoutTotal" class="text-lg font-black text-brand-600">0đ</span>
+                </div>
+
+                <button type="submit" id="payButton" class="w-full py-3 bg-brand-600 hover:bg-brand-700 text-white font-bold text-sm rounded-xl shadow-lg transition flex items-center justify-center gap-2 mt-4">
+                    <i class="fa-solid fa-lock"></i>
+                    <span>Xác Nhận & Thanh Toán</span>
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <!-- MODAL: SUCCESSFUL PAYMENT & E-VOUCHER PREVIEW -->
+    <div id="successModal" class="fixed inset-0 z-50 bg-black/70 backdrop-blur-sm hidden flex items-center justify-center p-4 overflow-y-auto">
+        <div class="bg-white rounded-3xl max-w-md w-full overflow-hidden shadow-2xl relative p-6 text-center">
+            <div class="w-16 h-16 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto text-3xl mb-3">
+                <i class="fa-solid fa-circle-check"></i>
+            </div>
+
+            <h2 class="text-xl font-black text-gray-900 mb-1">Thanh Toán Thành Công!</h2>
+            <p class="text-xs text-gray-500 mb-4">Mã E-Voucher của bạn đã sẵn sàng sử dụng</p>
+
+            <div class="bg-amber-50 border-2 border-dashed border-amber-300 rounded-2xl p-4 mb-4">
+                <span class="text-[10px] uppercase font-bold tracking-wider text-amber-700 block mb-1">Mã Số E-Voucher</span>
+                <div id="generatedVoucherCode" class="text-2xl font-black tracking-widest text-gray-900 font-mono mb-3">
+                    EV-889922
+                </div>
+
+                <!-- Dynamic QR Code Container -->
+                <div id="qrcode" class="flex justify-center bg-white p-3 rounded-xl shadow-inner mx-auto w-36 h-36"></div>
+                <p class="text-[11px] text-gray-500 mt-2">Đưa mã QR này cho nhân viên phục vụ khi thanh toán</p>
+            </div>
+
+            <div class="space-y-2">
+                <button onclick="goToMyVouchers()" class="w-full py-2.5 bg-brand-600 text-white font-bold text-xs rounded-xl hover:bg-brand-700 transition">
+                    Xem Trong "Voucher Của Tôi"
+                </button>
+                <button onclick="closeSuccessModal()" class="w-full py-2 text-gray-500 font-medium text-xs hover:text-gray-800 transition">
+                    Đóng cửa sổ
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL: VIEW QR CODE FROM MY VOUCHERS -->
+    <div id="qrViewModal" class="fixed inset-0 z-50 bg-black/60 backdrop-blur-sm hidden flex items-center justify-center p-4">
+        <div class="bg-white rounded-3xl max-w-sm w-full p-6 text-center relative">
+            <button onclick="closeQRModal()" class="absolute right-4 top-4 text-gray-400 hover:text-gray-700">
+                <i class="fa-solid fa-xmark text-lg"></i>
+            </button>
+
+            <h3 id="qrModalTitle" class="font-bold text-gray-800 text-sm mb-1">Chi Tiết E-Voucher</h3>
+            <span id="qrModalCode" class="text-xs font-mono font-bold text-brand-600 block mb-4"></span>
+
+            <div id="qrcodeDetail" class="flex justify-center bg-gray-50 p-4 rounded-2xl border border-gray-100 mx-auto w-48 h-48 mb-4"></div>
+
+            <p class="text-xs text-gray-500 mb-4">Vui lòng xuất trình mã này cho nhân viên tại địa điểm áp dụng.</p>
+
+            <button onclick="closeQRModal()" class="w-full py-2 bg-gray-100 text-gray-700 font-semibold text-xs rounded-xl hover:bg-gray-200">
+                Đóng
+            </button>
+        </div>
+    </div>
+
+    <!-- FOOTER -->
+    <footer class="bg-gray-900 text-gray-400 text-xs py-12 mt-auto border-t border-gray-800">
+        <div class="container mx-auto px-4 grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            <div>
+                <div class="flex items-center gap-2 mb-3">
+                    <div class="w-8 h-8 rounded-lg bg-gradient-to-tr from-brand-600 to-accent-500 flex items-center justify-center text-white font-black text-base">
+                        V
+                    </div>
+                    <span class="text-lg font-black text-white tracking-tight">VoucherZone</span>
+                </div>
+                <p class="leading-relaxed mb-4">Nền tảng cung cấp E-Voucher ưu đãi ẩm thực, giải trí, làm đẹp hàng đầu Việt Nam. Tiết kiệm hơn cho mọi chi tiêu hàng ngày.</p>
+                <div class="flex gap-3 text-base text-gray-300">
+                    <a href="#" class="hover:text-brand-500"><i class="fa-brands fa-facebook"></i></a>
+                    <a href="#" class="hover:text-brand-500"><i class="fa-brands fa-instagram"></i></a>
+                    <a href="#" class="hover:text-brand-500"><i class="fa-brands fa-tiktok"></i></a>
+                    <a href="#" class="hover:text-brand-500"><i class="fa-brands fa-youtube"></i></a>
+                </div>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-sm mb-3">Danh Mục Deal</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" onclick="filterCategory('food')" class="hover:text-white transition">Ẩm Thực & Nhà Hàng</a></li>
+                    <li><a href="#" onclick="filterCategory('travel')" class="hover:text-white transition">Du Lịch & Khách Sạn</a></li>
+                    <li><a href="#" onclick="filterCategory('beauty')" class="hover:text-white transition">Spa & Làm Đẹp</a></li>
+                    <li><a href="#" onclick="filterCategory('entertainment')" class="hover:text-white transition">Vé Xem Phim & Giải Trí</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-sm mb-3">Hỗ Trợ Khách Hàng</h4>
+                <ul class="space-y-2">
+                    <li><a href="#" class="hover:text-white transition">Trung tâm trợ giúp</a></li>
+                    <li><a href="#" class="hover:text-white transition">Hướng dẫn mua & đổi Voucher</a></li>
+                    <li><a href="#" class="hover:text-white transition">Chính sách hoàn tiền 100%</a></li>
+                    <li><a href="#" class="hover:text-white transition">Điều khoản sử dụng</a></li>
+                </ul>
+            </div>
+
+            <div>
+                <h4 class="text-white font-bold text-sm mb-3">Thanh Toán An Toàn</h4>
+                <div class="grid grid-cols-3 gap-2 mb-4">
+                    <div class="bg-gray-800 p-2 rounded text-center text-pink-400 font-bold">MoMo</div>
+                    <div class="bg-gray-800 p-2 rounded text-center text-sky-400 font-bold">ZaloPay</div>
+                    <div class="bg-gray-800 p-2 rounded text-center text-blue-400 font-bold">VNPay</div>
+                </div>
+                <p class="text-[11px] text-gray-500">© 2026 VoucherZone Corp. Tất cả các quyền được bảo lưu.</p>
+            </div>
+        </div>
+    </footer>
+
+    <!-- JAVASCRIPT LOGIC -->
+    <script>
+        /* --- MOCK DATA SOURCE --- */
+        const VOUCHERS_DATA = [
+            {
+                id: 'v1',
+                brand: 'King BBQ Buffet',
+                title: 'Buffet Nướng Hàn Quốc - Menu Premium Hơn 200 Món',
+                category: 'food',
+                location: 'hcm',
+                locationName: 'TP. Hồ Chí Minh',
+                originalPrice: 489000,
+                price: 299000,
+                discount: '38%',
+                rating: 4.8,
+                soldCount: 1420,
+                image: 'https://images.unsplash.com/photo-1544025162-d76694265947?auto=format&fit=crop&w=600&q=80',
+                isFlashSale: true,
+                terms: [
+                    'Áp dụng toàn bộ hệ thống King BBQ tại TP.HCM.',
+                    'Hạn sử dụng: 45 ngày kể từ ngày mua.',
+                    'Áp dụng từ Thứ 2 đến Thứ 6 (10h00 - 22h00).',
+                    'Không áp dụng cùng các khuyến mãi khác.'
+                ]
+            },
+            {
+                id: 'v2',
+                brand: 'Haidalio Hotpot',
+                title: 'Voucher Tiền Mặt 500.000đ Áp Dụng Cho Tất Cả Món Lẩu',
+                category: 'food',
+                location: 'hanoi',
+                locationName: 'Hà Nội',
+                originalPrice: 500000,
+                price: 349000,
+                discount: '30%',
+                rating: 4.9,
+                soldCount: 2890,
+                image: 'https://images.unsplash.com/photo-1555126634-323283e090fa?auto=format&fit=crop&w=600&q=80',
+                isFlashSale: true,
+                terms: [
+                    'Áp dụng thanh toán hóa đơn tối đa 2 voucher/hóa đơn.',
+                    'Dùng được vào tất cả các ngày trong tuần và Lễ Tết.',
+                    'Hạn sử dụng: 60 ngày.'
+                ]
+            },
+            {
+                id: 'v3',
+                brand: 'CGV Cinemas',
+                title: 'Vé Xem Phim 2D Áp Dụng Cho Toàn Bộ Cụm Rạp Toàn Quốc',
+                category: 'entertainment',
+                location: 'hcm',
+                locationName: 'Toàn Quốc',
+                originalPrice: 130000,
+                price: 79000,
+                discount: '39%',
+                rating: 4.7,
+                soldCount: 5100,
+                image: 'https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=600&q=80',
+                isFlashSale: true,
+                terms: [
+                    'Vé đổi trực tiếp trên ứng dụng CGV hoặc tại rạp.',
+                    'Áp dụng cho phim 2D từ Thứ 2 đến Chủ Nhật.',
+                    'Không áp dụng suất chiếu đặc biệt/ phòng VIP.'
+                ]
+            },
+            {
+                id: 'v4',
+                brand: 'Anam Spa & Wellness',
+                title: 'Gói Massage Body Thảo Dược + Chăm Sóc Da Mặt 90 Phút',
+                category: 'beauty',
+                location: 'danang',
+                locationName: 'Đà Nẵng',
+                originalPrice: 650000,
+                price: 249000,
+                discount: '61%',
+                rating: 4.9,
+                soldCount: 830,
+                image: 'https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=600&q=80',
+                isFlashSale: true,
+                terms: [
+                    'Khách hàng vui lòng book lịch trước 3 tiếng.',
+                    'Miễn phí trà thảo mộc & mứt gừng sau trị liệu.',
+                    'Hạn sử dụng: 30 ngày.'
+                ]
+            },
+            {
+                id: 'v5',
+                brand: 'Phú Quốc Sunset Resort 4★',
+                title: 'Combo 3N2Đ Phòng Deluxe Biển + Buffet Sáng & Vé VinWonders',
+                category: 'travel',
+                location: 'hcm',
+                locationName: 'Phú Quốc',
+                originalPrice: 3200000,
+                price: 1890000,
+                discount: '41%',
+                rating: 4.9,
+                soldCount: 420,
+                image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=600&q=80',
+                isFlashSale: false,
+                terms: [
+                    'Áp dụng cho 02 người lớn.',
+                    'Miễn phí đưa đón sân bay Phú Quốc.',
+                    'Hạn đăng ký phòng đến cuối năm 2026.'
+                ]
+            },
+            {
+                id: 'v6',
+                brand: 'The Coffee House',
+                title: 'Voucher Trà & Cà Phê Mới Nhất - Đồng Giá 29.000đ',
+                category: 'food',
+                location: 'hcm',
+                locationName: 'Toàn Quốc',
+                originalPrice: 55000,
+                price: 29000,
+                discount: '47%',
+                rating: 4.6,
+                soldCount: 6300,
+                image: 'https://images.unsplash.com/photo-1501339847302-ac426a4a7cbb?auto=format&fit=crop&w=600&q=80',
+                isFlashSale: false,
+                terms: [
+                    'Áp dụng cho tất cả size M.',
+                    'Dùng tại quán hoặc mang đi.',
+                    'Hạn sử dụng 15 ngày.'
+                ]
+            },
+            {
+                id: 'v7',
+                brand: 'JumpArena Trampoline',
+                title: 'Vé Bật Nhảy Tự Do Khôn Giới Hạn Thời Gian',
+                category: 'entertainment',
+                location: 'hanoi',
+                locationName: 'Hà Nội',
+                originalPrice: 180000,
+                price: 119000,
+                discount: '34%',
+                rating: 4.5,
+                soldCount: 950,
+                image: 'https://images.unsplash.com/photo-1518611012118-696072aa579a?auto=format&fit=crop&w=600&q=80',
+                isFlashSale: false,
+                terms: [
+                    'Miễn phí tất vớ bám sàn chuyên dụng.',
+                    'Áp dụng cho mọi lứa tuổi.'
+                ]
+            },
+            {
+                id: 'v8',
+                brand: 'Uniqlo VN',
+                title: 'E-Voucher Mua Sắm Thời Trang Trị Giá 200.000đ',
+                category: 'shopping',
+                location: 'hcm',
+                locationName: 'Toàn Quốc',
+                originalPrice: 200000,
+                price: 159000,
+                discount: '20%',
+                rating: 4.8,
+                soldCount: 3100,
+                image: 'https://images.unsplash.com/photo-1441986300917-64674bd600d8?auto=format&fit=crop&w=600&q=80',
+                isFlashSale: false,
+                terms: [
+                    'Áp dụng cho hóa đơn từ 500.000đ.',
+                    'Sử dụng tại cửa hàng hoặc Online.'
+                ]
+            }
+        ];
+
+        // BANNER SLIDER DATA
+        const BANNERS = [
+            {
+                title: "Buffet Hải Sản Cao Cấp 5 Sao - Giảm Đến 45%",
+                desc: "Thưởng thức Tôm hùm, Cua Cà Mau & hơn 100 món Á-Âu tại chuỗi nhà hàng Sheraton. Áp dụng cho cả tuần!",
+                tag: "Siêu Deal Cuối Tuần",
+                img: "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=1200&q=80"
+            },
+            {
+                title: "Săn Vé Phim Rạp CGV Chỉ Với 79.000đ",
+                desc: "Trải nghiệm rạp chiếu phim đỉnh cao cùng vô vàn bom tấn Hollywood đang chiếu trong tuần!",
+                tag: "Giải Trí Hot",
+                img: "https://images.unsplash.com/photo-1489599849927-2ee91cede3ba?auto=format&fit=crop&w=1200&q=80"
+            },
+            {
+                title: "Gói Spa & Chăm Sóc SkinCare Cao Cấp",
+                desc: "Thư giãn không gian 5 sao, phục hồi năng lượng sau những ngày làm việc mệt mỏi.",
+                tag: "Làm Đẹp 50%",
+                img: "https://images.unsplash.com/photo-1540555700478-4be289fbecef?auto=format&fit=crop&w=1200&q=80"
+            }
+        ];
+
+        /* --- APP STATE --- */
+        let state = {
+            currentCategory: 'all',
+            location: 'all',
+            priceRange: 'all',
+            sortBy: 'popular',
+            searchQuery: '',
+            cart: [],
+            appliedPromo: null,
+            promoDiscount: 0,
+            activeModalVoucher: null,
+            modalQty: 1,
+            purchasedVouchers: [],
+            myVoucherFilter: 'all',
+            currentBannerIdx: 0
+        };
+
+        /* --- INITIALIZATION --- */
+        window.addEventListener('DOMContentLoaded', () => {
+            renderBanners();
+            startFlashSaleTimer();
+            renderFlashSaleItems();
+            applyFilters();
+            updateCartUI();
+            
+            // Load saved my-vouchers if any
+            const savedVouchers = localStorage.getItem('vz_purchased_vouchers');
+            if(savedVouchers) {
+                try { state.purchasedVouchers = JSON.parse(savedVouchers); } catch(e){}
+            }
+        });
+
+        /* --- BANNER SLIDER LOGIC --- */
+        function renderBanners() {
+            const b = BANNERS[state.currentBannerIdx];
+            document.getElementById('bannerImage').src = b.img;
+            document.getElementById('bannerTag').innerHTML = `<i class="fa-solid fa-bolt mr-1"></i> ${b.tag}`;
+            document.getElementById('bannerTitle').innerText = b.title;
+            document.getElementById('bannerDesc').innerText = b.desc;
+
+            const dotsContainer = document.getElementById('bannerDots');
+            dotsContainer.innerHTML = BANNERS.map((_, idx) => `
+                <div class="w-2.5 h-2.5 rounded-full cursor-pointer transition ${idx === state.currentBannerIdx ? 'bg-brand-500 w-6' : 'bg-white/50'}" onclick="setBanner(${idx})"></div>
+            `).join('');
+        }
+
+        function nextBanner() {
+            state.currentBannerIdx = (state.currentBannerIdx + 1) % BANNERS.length;
+            renderBanners();
+        }
+
+        function prevBanner() {
+            state.currentBannerIdx = (state.currentBannerIdx - 1 + BANNERS.length) % BANNERS.length;
+            renderBanners();
+        }
+
+        function setBanner(idx) {
+            state.currentBannerIdx = idx;
+            renderBanners();
+        }
+
+        /* --- COUNTDOWN TIMER --- */
+        function startFlashSaleTimer() {
+            let totalSeconds = 4 * 3600 + 28 * 60 + 45;
+            setInterval(() => {
+                if (totalSeconds <= 0) return;
+                totalSeconds--;
+                const h = Math.floor(totalSeconds / 3600);
+                const m = Math.floor((totalSeconds % 3600) / 60);
+                const s = totalSeconds % 60;
+
+                document.getElementById('flashHours').innerText = String(h).padStart(2, '0');
+                document.getElementById('flashMinutes').innerText = String(m).padStart(2, '0');
+                document.getElementById('flashSeconds').innerText = String(s).padStart(2, '0');
+            }, 1000);
+        }
+
+        /* --- RENDER FLASH SALE ITEMS --- */
+        function renderFlashSaleItems() {
+            const container = document.getElementById('flashSaleGrid');
+            const flashItems = VOUCHERS_DATA.filter(item => item.isFlashSale);
+
+            container.innerHTML = flashItems.map(item => `
+                <div onclick="openVoucherModal('${item.id}')" class="bg-white rounded-2xl overflow-hidden shadow-md text-gray-800 hover:shadow-2xl transition duration-300 cursor-pointer flex flex-col justify-between group">
+                    <div>
+                        <div class="relative aspect-video overflow-hidden">
+                            <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <span class="absolute top-2 left-2 bg-red-600 text-white text-[10px] font-black px-2 py-0.5 rounded shadow">
+                                ${item.discount} OFF
+                            </span>
+                            <span class="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded backdrop-blur-sm">
+                                <i class="fa-solid fa-location-dot text-brand-500"></i> ${item.locationName}
+                            </span>
+                        </div>
+                        <div class="p-3">
+                            <span class="text-[10px] font-bold text-brand-600 uppercase tracking-wider block mb-0.5">${item.brand}</span>
+                            <h3 class="font-bold text-xs line-clamp-2 text-gray-800 group-hover:text-brand-600 transition mb-2">${item.title}</h3>
+                            
+                            <div class="flex items-baseline gap-2 mb-2">
+                                <span class="text-base font-black text-brand-600">${formatCurrency(item.price)}</span>
+                                <span class="text-[11px] text-gray-400 line-through">${formatCurrency(item.originalPrice)}</span>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="px-3 pb-3">
+                        <div class="w-full bg-gray-100 rounded-full h-2 mb-2 overflow-hidden">
+                            <div class="bg-gradient-to-r from-amber-500 to-red-500 h-2 rounded-full" style="width: 75%"></div>
+                        </div>
+                        <div class="flex justify-between text-[10px] text-gray-500 font-medium">
+                            <span>Đã bán ${item.soldCount}</span>
+                            <span class="text-red-600 font-bold">Gần hết hàng</span>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* --- FILTERING & SEARCHING --- */
+        function filterCategory(cat) {
+            state.currentCategory = cat;
+            
+            // Update UI buttons
+            document.querySelectorAll('.cat-nav-btn').forEach(btn => {
+                btn.classList.remove('bg-brand-600', 'text-white');
+                btn.classList.add('text-gray-300');
+            });
+            event.currentTarget.classList.add('bg-brand-600', 'text-white');
+
+            applyFilters();
+        }
+
+        function handleSearch() {
+            const val = document.getElementById('searchInput').value || document.getElementById('mobileSearchInput').value;
+            state.searchQuery = val.trim().toLowerCase();
+            applyFilters();
+        }
+
+        function applyFilters() {
+            state.location = document.getElementById('locationFilter').value;
+            state.priceRange = document.getElementById('priceFilter').value;
+            state.sortBy = document.getElementById('sortBy').value;
+
+            let filtered = [...VOUCHERS_DATA];
+
+            // Category
+            if (state.currentCategory !== 'all') {
+                filtered = filtered.filter(item => item.category === state.currentCategory);
+            }
+
+            // Location
+            if (state.location !== 'all') {
+                filtered = filtered.filter(item => item.location === state.location);
+            }
+
+            // Price Range
+            if (state.priceRange === 'under200') {
+                filtered = filtered.filter(item => item.price < 200000);
+            } else if (state.priceRange === '200to500') {
+                filtered = filtered.filter(item => item.price >= 200000 && item.price <= 500000);
+            } else if (state.priceRange === 'above500') {
+                filtered = filtered.filter(item => item.price > 500000);
+            }
+
+            // Search
+            if (state.searchQuery) {
+                filtered = filtered.filter(item => 
+                    item.title.toLowerCase().includes(state.searchQuery) || 
+                    item.brand.toLowerCase().includes(state.searchQuery)
+                );
+            }
+
+            // Sorting
+            if (state.sortBy === 'popular') {
+                filtered.sort((a, b) => b.soldCount - a.soldCount);
+            } else if (state.sortBy === 'discount') {
+                filtered.sort((a, b) => parseInt(b.discount) - parseInt(a.discount));
+            } else if (state.sortBy === 'priceAsc') {
+                filtered.sort((a, b) => a.price - b.price);
+            } else if (state.sortBy === 'priceDesc') {
+                filtered.sort((a, b) => b.price - a.price);
+            }
+
+            renderVoucherGrid(filtered);
+        }
+
+        function resetFilters() {
+            document.getElementById('locationFilter').value = 'all';
+            document.getElementById('priceFilter').value = 'all';
+            document.getElementById('sortBy').value = 'popular';
+            document.getElementById('searchInput').value = '';
+            document.getElementById('mobileSearchInput').value = '';
+            state.searchQuery = '';
+            state.currentCategory = 'all';
+            applyFilters();
+        }
+
+        function renderVoucherGrid(list) {
+            const grid = document.getElementById('voucherGrid');
+            const empty = document.getElementById('emptyState');
+
+            if (list.length === 0) {
+                grid.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            grid.innerHTML = list.map(item => `
+                <div class="bg-white rounded-2xl border border-gray-100 overflow-hidden shadow-sm hover:shadow-xl transition duration-300 flex flex-col justify-between group">
+                    <div>
+                        <!-- Cover Image -->
+                        <div class="relative aspect-video overflow-hidden bg-gray-100 cursor-pointer" onclick="openVoucherModal('${item.id}')">
+                            <img src="${item.image}" alt="${item.title}" class="w-full h-full object-cover group-hover:scale-105 transition duration-500">
+                            <div class="absolute top-2 left-2 bg-gradient-to-r from-red-600 to-brand-600 text-white font-black text-[11px] px-2.5 py-0.5 rounded-full shadow">
+                                ${item.discount} OFF
+                            </div>
+                            <div class="absolute bottom-2 left-2 bg-black/60 text-white text-[10px] px-2 py-0.5 rounded-md backdrop-blur-sm">
+                                <i class="fa-solid fa-location-dot text-brand-500"></i> ${item.locationName}
+                            </div>
+                        </div>
+
+                        <!-- Content -->
+                        <div class="p-4">
+                            <div class="flex items-center justify-between mb-1">
+                                <span class="text-[10px] font-extrabold text-brand-600 uppercase tracking-wider">${item.brand}</span>
+                                <div class="flex items-center gap-1 text-amber-400 text-xs">
+                                    <i class="fa-solid fa-star"></i>
+                                    <span class="text-gray-700 font-bold text-[11px]">${item.rating}</span>
+                                </div>
+                            </div>
+
+                            <h3 onclick="openVoucherModal('${item.id}')" class="font-bold text-sm text-gray-900 group-hover:text-brand-600 transition line-clamp-2 cursor-pointer mb-3 leading-snug">
+                                ${item.title}
+                            </h3>
+
+                            <!-- Price -->
+                            <div class="flex items-baseline gap-2 mb-3">
+                                <span class="text-lg font-black text-brand-600">${formatCurrency(item.price)}</span>
+                                <span class="text-xs text-gray-400 line-through">${formatCurrency(item.originalPrice)}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Footer Action -->
+                    <div class="p-4 pt-0 border-t border-gray-50 flex items-center justify-between gap-2">
+                        <span class="text-[11px] text-gray-400">Đã bán ${item.soldCount}</span>
+                        <div class="flex gap-1.5">
+                            <button onclick="addToCart('${item.id}')" title="Thêm vào giỏ" class="w-8 h-8 rounded-xl border border-gray-200 text-gray-600 hover:bg-brand-50 hover:text-brand-600 hover:border-brand-200 flex items-center justify-center transition">
+                                <i class="fa-solid fa-cart-plus text-xs"></i>
+                            </button>
+                            <button onclick="quickBuy('${item.id}')" class="px-3 py-1.5 rounded-xl bg-brand-600 hover:bg-brand-700 text-white text-xs font-bold transition">
+                                Mua ngay
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        /* --- VOUCHER DETAIL MODAL --- */
+        function openVoucherModal(id) {
+            const item = VOUCHERS_DATA.find(v => v.id === id);
+            if (!item) return;
+
+            state.activeModalVoucher = item;
+            state.modalQty = 1;
+
+            document.getElementById('modalImg').src = item.image;
+            document.getElementById('modalDiscount').innerText = item.discount;
+            document.getElementById('modalBrand').innerText = item.brand;
+            document.getElementById('modalLocation').innerText = item.locationName;
+            document.getElementById('modalTitle').innerText = item.title;
+            document.getElementById('modalRating').innerText = item.rating;
+            document.getElementById('modalSold').innerText = item.soldCount;
+            document.getElementById('modalPrice').innerText = formatCurrency(item.price);
+            document.getElementById('modalOriginalPrice').innerText = formatCurrency(item.originalPrice);
+            document.getElementById('modalQty').innerText = state.modalQty;
+
+            const termsUl = document.getElementById('modalTerms');
+            termsUl.innerHTML = item.terms.map(t => `<li>${t}</li>`).join('');
+
+            document.getElementById('voucherModal').classList.remove('hidden');
+        }
+
+        function closeVoucherModal() {
+            document.getElementById('voucherModal').classList.add('hidden');
+        }
+
+        function adjustModalQty(delta) {
+            state.modalQty = Math.max(1, state.modalQty + delta);
+            document.getElementById('modalQty').innerText = state.modalQty;
+        }
+
+        function addToCartFromModal() {
+            if (!state.activeModalVoucher) return;
+            addToCart(state.activeModalVoucher.id, state.modalQty);
+            closeVoucherModal();
+            showToast('Đã thêm voucher vào giỏ hàng!');
+        }
+
+        function buyNowFromModal() {
+            if (!state.activeModalVoucher) return;
+            addToCart(state.activeModalVoucher.id, state.modalQty);
+            closeVoucherModal();
+            toggleCartDrawer(true);
+        }
+
+        /* --- SHOPPING CART MANAGEMENT --- */
+        function addToCart(id, qty = 1) {
+            const item = VOUCHERS_DATA.find(v => v.id === id);
+            if (!item) return;
+
+            const existing = state.cart.find(c => c.id === id);
+            if (existing) {
+                existing.qty += qty;
+            } else {
+                state.cart.push({ ...item, qty });
+            }
+
+            updateCartUI();
+            showToast(`Đã thêm "${item.brand}" vào giỏ!`);
+        }
+
+        function quickBuy(id) {
+            addToCart(id, 1);
+            toggleCartDrawer(true);
+        }
+
+        function updateCartQty(id, delta) {
+            const idx = state.cart.findIndex(c => c.id === id);
+            if (idx !== -1) {
+                state.cart[idx].qty += delta;
+                if (state.cart[idx].qty <= 0) {
+                    state.cart.splice(idx, 1);
+                }
+            }
+            updateCartUI();
+        }
+
+        function removeFromCart(id) {
+            state.cart = state.cart.filter(c => c.id !== id);
+            updateCartUI();
+        }
+
+        function updateCartUI() {
+            const count = state.cart.reduce((sum, item) => sum + item.qty, 0);
+            document.getElementById('cartBadge').innerText = count;
+            document.getElementById('cartCountTitle').innerText = `(${count})`;
+
+            const container = document.getElementById('cartItemsContainer');
+            const empty = document.getElementById('emptyCart');
+            const footer = document.getElementById('cartFooter');
+
+            if (state.cart.length === 0) {
+                container.innerHTML = '';
+                empty.classList.remove('hidden');
+                footer.classList.add('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            footer.classList.remove('hidden');
+
+            container.innerHTML = state.cart.map(item => `
+                <div class="flex gap-3 bg-gray-50 p-3 rounded-2xl border border-gray-100 items-center">
+                    <img src="${item.image}" alt="${item.title}" class="w-16 h-16 rounded-xl object-cover">
+                    <div class="flex-1 min-w-0">
+                        <span class="text-[10px] font-bold text-brand-600 block uppercase">${item.brand}</span>
+                        <h4 class="text-xs font-bold text-gray-800 truncate">${item.title}</h4>
+                        <div class="text-xs font-black text-brand-600 mt-1">${formatCurrency(item.price)}</div>
+                    </div>
+                    <div class="flex flex-col items-end gap-2">
+                        <button onclick="removeFromCart('${item.id}')" class="text-gray-400 hover:text-red-500 text-xs">
+                            <i class="fa-solid fa-trash-can"></i>
+                        </button>
+                        <div class="flex items-center border border-gray-200 rounded-lg bg-white">
+                            <button onclick="updateCartQty('${item.id}', -1)" class="w-6 h-6 text-xs text-gray-600 hover:bg-gray-100">-</button>
+                            <span class="w-6 text-center text-xs font-bold">${item.qty}</span>
+                            <button onclick="updateCartQty('${item.id}', 1)" class="w-6 h-6 text-xs text-gray-600 hover:bg-gray-100">+</button>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+
+            // Calculate Totals
+            const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+            document.getElementById('cartSubtotal').innerText = formatCurrency(subtotal);
+
+            let discountAmount = 0;
+            if (state.appliedPromo === 'DEAL50K' && subtotal >= 200000) {
+                discountAmount = 50000;
+            }
+
+            state.promoDiscount = discountAmount;
+            const grandTotal = Math.max(0, subtotal - discountAmount);
+
+            document.getElementById('cartDiscount').innerText = `-${formatCurrency(discountAmount)}`;
+            document.getElementById('cartTotal').innerText = formatCurrency(grandTotal);
+            document.getElementById('checkoutTotal').innerText = formatCurrency(grandTotal);
+        }
+
+        function toggleCartDrawer(open) {
+            const drawer = document.getElementById('cartDrawer');
+            if (open) {
+                drawer.classList.remove('hidden');
+            } else {
+                drawer.classList.add('hidden');
+            }
+        }
+
+        function applyPromoCode() {
+            const input = document.getElementById('promoInput').value.trim().toUpperCase();
+            const msg = document.getElementById('promoMessage');
+
+            if (input === 'DEAL50K') {
+                const subtotal = state.cart.reduce((sum, item) => sum + (item.price * item.qty), 0);
+                if (subtotal < 200000) {
+                    msg.className = "text-[11px] text-amber-600 font-semibold block";
+                    msg.innerText = "Mã DEAL50K áp dụng cho đơn từ 200.000đ trở lên!";
+                } else {
+                    state.appliedPromo = 'DEAL50K';
+                    msg.className = "text-[11px] text-emerald-600 font-semibold block";
+                    msg.innerText = "Áp dụng mã giảm 50.000đ thành công!";
+                    updateCartUI();
+                }
+            } else {
+                msg.className = "text-[11px] text-red-500 font-semibold block";
+                msg.innerText = "Mã giảm giá không hợp lệ hoặc đã hết hạn!";
+            }
+        }
+
+        /* --- CHECKOUT & PAYMENT FLOW --- */
+        function openCheckoutModal() {
+            if (state.cart.length === 0) return;
+            toggleCartDrawer(false);
+            document.getElementById('checkoutModal').classList.remove('hidden');
+        }
+
+        function closeCheckoutModal() {
+            document.getElementById('checkoutModal').classList.add('hidden');
+        }
+
+        function handlePaymentSubmit(e) {
+            e.preventDefault();
+
+            const payBtn = document.getElementById('payButton');
+            payBtn.disabled = true;
+            payBtn.innerHTML = `<i class="fa-solid fa-spinner fa-spin"></i> Đang xử lý giao dịch...`;
+
+            setTimeout(() => {
+                // Generate purchased voucher record
+                const newCode = 'EV-' + Math.floor(100000 + Math.random() * 900000);
+                const firstItem = state.cart[0];
+
+                const purchasedItem = {
+                    code: newCode,
+                    title: firstItem ? firstItem.title : 'E-Voucher Ưu Đãi',
+                    brand: firstItem ? firstItem.brand : 'Thương hiệu',
+                    image: firstItem ? firstItem.image : '',
+                    price: state.cart.reduce((s, i) => s + i.price * i.qty, 0) - state.promoDiscount,
+                    purchaseDate: new Date().toLocaleDateString('vi-VN'),
+                    status: 'unused', // 'unused', 'used', 'expired'
+                    custName: document.getElementById('custName').value,
+                    custPhone: document.getElementById('custPhone').value,
+                };
+
+                state.purchasedVouchers.unshift(purchasedItem);
+                localStorage.setItem('vz_purchased_vouchers', JSON.stringify(state.purchasedVouchers));
+
+                // Reset Cart
+                state.cart = [];
+                state.appliedPromo = null;
+                updateCartUI();
+
+                // UI Display Success Modal
+                payBtn.disabled = false;
+                payBtn.innerHTML = `<i class="fa-solid fa-lock"></i> Xác Nhận & Thanh Toán`;
+                closeCheckoutModal();
+
+                document.getElementById('generatedVoucherCode').innerText = newCode;
+                
+                // Render QR Code inside Success Modal
+                const qrContainer = document.getElementById('qrcode');
+                qrContainer.innerHTML = '';
+                new QRCode(qrContainer, {
+                    text: newCode,
+                    width: 120,
+                    height: 120,
+                });
+
+                document.getElementById('successModal').classList.remove('hidden');
+            }, 1200);
+        }
+
+        function closeSuccessModal() {
+            document.getElementById('successModal').classList.add('hidden');
+        }
+
+        function goToMyVouchers() {
+            closeSuccessModal();
+            switchTab('my-vouchers');
+        }
+
+        /* --- MY VOUCHERS MANAGEMENT TAB --- */
+        function switchTab(tab) {
+            const homeView = document.getElementById('homeView');
+            const myVouchersView = document.getElementById('myVouchersView');
+
+            if (tab === 'home') {
+                homeView.classList.remove('hidden');
+                myVouchersView.classList.add('hidden');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            } else if (tab === 'my-vouchers') {
+                homeView.classList.add('hidden');
+                myVouchersView.classList.remove('hidden');
+                renderMyVouchers();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        function filterMyVouchers(status) {
+            state.myVoucherFilter = status;
+            document.querySelectorAll('.my-voucher-tab').forEach(b => {
+                b.classList.remove('border-b-2', 'border-brand-600', 'text-brand-600');
+                b.classList.add('text-gray-500');
+            });
+            event.currentTarget.classList.add('border-b-2', 'border-brand-600', 'text-brand-600');
+            renderMyVouchers();
+        }
+
+        function renderMyVouchers() {
+            const container = document.getElementById('purchasedVouchersList');
+            const empty = document.getElementById('emptyMyVouchers');
+
+            // Count Badges
+            const allCount = state.purchasedVouchers.length;
+            const unusedCount = state.purchasedVouchers.filter(v => v.status === 'unused').length;
+            const usedCount = state.purchasedVouchers.filter(v => v.status === 'used').length;
+
+            document.getElementById('count-mv-all').innerText = allCount;
+            document.getElementById('count-mv-unused').innerText = unusedCount;
+            document.getElementById('count-mv-used').innerText = usedCount;
+
+            let filtered = [...state.purchasedVouchers];
+            if (state.myVoucherFilter !== 'all') {
+                filtered = filtered.filter(v => v.status === state.myVoucherFilter);
+            }
+
+            if (filtered.length === 0) {
+                container.innerHTML = '';
+                empty.classList.remove('hidden');
+                return;
+            }
+
+            empty.classList.add('hidden');
+            container.innerHTML = filtered.map(v => `
+                <div class="bg-white rounded-2xl border border-gray-100 p-4 shadow-sm flex flex-col md:flex-row md:items-center justify-between gap-4">
+                    <div class="flex items-center gap-4">
+                        <img src="${v.image || 'https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=200&q=80'}" class="w-16 h-16 rounded-xl object-cover">
+                        <div>
+                            <span class="text-[10px] font-bold text-brand-600 uppercase block">${v.brand}</span>
+                            <h4 class="font-bold text-sm text-gray-900">${v.title}</h4>
+                            <div class="text-xs text-gray-400 mt-1">
+                                Ngày mua: ${v.purchaseDate} • Mã: <span class="font-mono font-bold text-gray-700">${v.code}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="flex items-center justify-between md:justify-end gap-3 border-t md:border-t-0 pt-3 md:pt-0 border-gray-100">
+                        <span class="px-2.5 py-1 rounded-full text-[11px] font-bold uppercase ${
+                            v.status === 'unused' ? 'bg-emerald-100 text-emerald-700' : 'bg-gray-100 text-gray-500'
+                        }">
+                            ${v.status === 'unused' ? 'Chưa sử dụng' : 'Đã sử dụng'}
+                        </span>
+                        
+                        <button onclick="viewQRCodeDetail('${v.code}', '${v.brand}')" class="px-4 py-2 bg-gray-900 text-white text-xs font-bold rounded-xl hover:bg-gray-800 transition flex items-center gap-1.5">
+                            <i class="fa-solid fa-qrcode"></i> hiện mã QR
+                        </button>
+                    </div>
+                </div>
+            `).join('');
+        }
+
+        function viewQRCodeDetail(code, brand) {
+            document.getElementById('qrModalTitle').innerText = brand;
+            document.getElementById('qrModalCode').innerText = code;
+
+            const container = document.getElementById('qrcodeDetail');
+            container.innerHTML = '';
+            new QRCode(container, {
+                text: code,
+                width: 160,
+                height: 160,
+            });
+
+            document.getElementById('qrViewModal').classList.remove('hidden');
+        }
+
+        function closeQRModal() {
+            document.getElementById('qrViewModal').classList.add('hidden');
+        }
+
+        /* --- UTILITY HELPERS --- */
+        function formatCurrency(val) {
+            return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(val);
+        }
+
+        function scrollToDeals() {
+            document.getElementById('dealsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function showToast(msg) {
+            const toast = document.createElement('div');
+            toast.className = 'fixed bottom-6 right-6 bg-gray-900 text-white text-xs font-bold px-4 py-3 rounded-2xl shadow-2xl z-50 flex items-center gap-2 animate-bounce';
+            toast.innerHTML = `<i class="fa-solid fa-circle-check text-emerald-400"></i> ${msg}`;
+            document.body.appendChild(toast);
+
+            setTimeout(() => {
+                toast.remove();
+            }, 3000);
+        }
+
+        function toggleAccountModal() {
+            showToast('Chức năng tài khoản cá nhân đang phát triển!');
+        }
+    </script>
+</body>
+</html>
